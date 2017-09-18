@@ -1,0 +1,49 @@
+import socket, sys
+ 
+class myDNSServer:
+    def __init__(self):
+        self.host=''
+        self.port=54321
+        self.run_server()
+ 
+    def run_server(self):
+        
+        server_socket = socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
+        
+        server_socket.bind((self.host,self.port))
+ 
+        print "server wait client..."
+        while True:
+            try:
+                message,client_address=server_socket.recvfrom(2048)
+                print "New client: ",client_address
+            except:
+                print "break,close..."
+                break
+ 
+        server_socket.close()
+ 
+class myClient:
+    def __init__(self):
+        self.remote_host='127.0.0.1'
+        self.remote_port=54321
+        self.run_client()
+ 
+    def run_client(self):
+        client_socket=socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
+        print "connect to server: ",self.remote_host,"..."
+ 
+        try:
+            client_socket.connect((self.remote_host,self.remote_port))
+        except (socket.gaierror,socket.error),e:
+            print "connect fail...%s" %e
+            sys.exit(1)
+ 
+        print "Spojeno"
+        client_socket.sendall(" ")
+        client_socket.close()
+ 
+if sys.argv[1]=="run_dns_server":
+    server=myDNSServer()
+else:
+    client=myClient()
